@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Event Driven Data Processing Pipeline
+
+Globals:
+  Function:
+    Runtime: python3.13
+    Timeout: 30
+    MemorySize: 128
+
+Resources:
+
+  RawDataBucket:
+    Type: AWS::S3::Bucket
+
+  ProcessedDataBucket:
+    Type: AWS::S3::Bucket
+
+  IngestFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ingest_lambda/
+      Handler: app.lambda_handler
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref RawDataBucket
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /ingest
+            Method: post
+
+  DailyReportFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: report_lambda/
+      Handler: app.lambda_handler
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref RawDataBucket
+        - S3WritePolicy:
+            BucketName: !Ref ProcessedDataBucket
+      Events:
+        DailySchedule:
+          Type: Schedule
+          Properties:
+            Schedule: rate(1 day)

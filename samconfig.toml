@@ -1,0 +1,12 @@
+version = 0.1
+
+[default.deploy.parameters]
+stack_name = "event-driven-pipeline"
+region = "ap-south-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+s3_bucket = "sam-artifacts-event-pipeline-12345"
+image_repositories = []
+
+[default.global.parameters]
+region = "ap-south-1"
