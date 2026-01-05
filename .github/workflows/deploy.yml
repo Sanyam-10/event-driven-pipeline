@@ -1,4 +1,4 @@
-name: Deploy SAM (Python 3.13 - No Docker)
+name: Deploy SAM (Python 3.13 - No Docker) 
 
 on:
   push:
